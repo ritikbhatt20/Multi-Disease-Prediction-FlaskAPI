@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from flask import Flask, request, jsonify
 
-model = pickle.load(open('diabetes_model.pkl', 'rb'))
+modelDiabetes = pickle.load(open('diabetes_model.pkl', 'rb'))
 
 app = Flask(__name__)
 
@@ -15,6 +15,9 @@ def home():
 
 @app.route('/predictD', methods=['POST'])
 def predict():
+
+    # Inputs for Diabetes model
+
     Pregnancies = request.form.get('Pregnancies')
     Glucose = request.form.get('Glucose')
     BloodPressure = request.form.get('BloodPressure')
@@ -26,7 +29,7 @@ def predict():
 
     input_query = np.array([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]], dtype=np.float64)
 
-    result = model.predict(input_query)[0]
+    result = modelDiabetes.predict(input_query)[0]
 
     return jsonify({'Outcome of Diabetes': str(result)})
 
