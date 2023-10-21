@@ -4,6 +4,7 @@ import numpy as np
 from flask import Flask, request, jsonify
 
 modelDiabetes = pickle.load(open('diabetes_model.pkl', 'rb'))
+modelHeart = pickle.load(open('heart_disease_model.pkl', 'rb'))
 
 app = Flask(__name__)
 
@@ -27,11 +28,27 @@ def predict():
     DiabetesPedigreeFunction = request.form.get('DiabetesPedigreeFunction')
     Age = request.form.get('Age')
 
-    input_query = np.array([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]], dtype=np.float64)
+    age = request.form.get('age')
+    sex = request.form.get('sex')
+    cp = request.form.get('cp')
+    trestbps = request.form.get('trestbps')
+    chol = request.form.get('chol')
+    fbs = request.form.get('fbs')
+    restecg = request.form.get('restecg')
+    thalach = request.form.get('thalach')
+    exang = request.form.get('exang')
+    oldpeak = request.form.get('oldpeak')
+    slope = request.form.get('slope')
+    ca = request.form.get('ca')
+    thal = request.form.get('thal')
 
-    result = modelDiabetes.predict(input_query)[0]
+    input_query_diabetes = np.array([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]], dtype=np.float64)
+    input_query_heart = np.array([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]], dtype=np.float64)
 
-    return jsonify({'Outcome of Diabetes': str(result)})
+    result_diabetes = modelDiabetes.predict(input_query_diabetes)[0]
+    result_heart = modelHeart.predict(input_query_heart)[0]
+
+    return jsonify({'Outcome of Diabetes': str(result_diabetes), 'Outcome of Heart': str(result_heart)})
 
 
 if __name__ == '__main__':
