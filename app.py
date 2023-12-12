@@ -16,8 +16,7 @@ def home():
 
 
 @app.route('/predictD', methods=['POST'])
-def predict():
-
+def predictD():
     # Inputs for Diabetes model
 
     Pregnancies = request.form.get('Pregnancies')
@@ -29,6 +28,17 @@ def predict():
     DiabetesPedigreeFunction = request.form.get('DiabetesPedigreeFunction')
     Age = request.form.get('Age')
 
+    input_query_diabetes = np.array(
+        [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]],
+        dtype=np.float64)
+
+    result_diabetes = modelDiabetes.predict(input_query_diabetes)[0]
+
+    return jsonify({'Outcome of Diabetes': str(result_diabetes)})
+
+
+@app.route('/predictH', methods=['POST'])
+def predictH():
     # Inputs for Heart model
 
     age = request.form.get('age')
@@ -45,6 +55,16 @@ def predict():
     ca = request.form.get('ca')
     thal = request.form.get('thal')
 
+    input_query_heart = np.array(
+        [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]], dtype=np.float64)
+
+    result_heart = modelHeart.predict(input_query_heart)[0]
+
+    return jsonify({'Outcome of Heart': str(result_heart)})
+
+
+@app.route('/predictP', methods=['POST'])
+def predictP():
     # Inputs for Parkinson's model
 
     MDVP_Fo_Hz = request.form.get('MDVP:Fo(Hz)')
@@ -70,15 +90,14 @@ def predict():
     D2 = request.form.get('D2')
     PPE = request.form.get('PPE')
 
-    input_query_diabetes = np.array([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]], dtype=np.float64)
-    input_query_heart = np.array([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]], dtype=np.float64)
-    input_query_parkinson = np.array([[MDVP_Fo_Hz, MDVP_Fhi_Hz, MDVP_Flo_Hz, MDVP_Jitter_per, MDVP_Jitter_Abs, MDVP_RAP, MDVP_PPQ, Jitter_DDP, MDVP_Shimmer, MDVP_Shimmer_dB, Shimmer_APQ3, Shimmer_APQ5, MDVP_APQ, Shimmer_DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]], dtype=np.float64)
+    input_query_parkinson = np.array([[MDVP_Fo_Hz, MDVP_Fhi_Hz, MDVP_Flo_Hz, MDVP_Jitter_per, MDVP_Jitter_Abs, MDVP_RAP,
+                                       MDVP_PPQ, Jitter_DDP, MDVP_Shimmer, MDVP_Shimmer_dB, Shimmer_APQ3, Shimmer_APQ5,
+                                       MDVP_APQ, Shimmer_DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]],
+                                     dtype=np.float64)
 
-    result_diabetes = modelDiabetes.predict(input_query_diabetes)[0]
-    result_heart = modelHeart.predict(input_query_heart)[0]
     result_parkinson = modelParkinson.predict(input_query_parkinson)[0]
 
-    return jsonify({'Outcome of Diabetes': str(result_diabetes), 'Outcome of Heart': str(result_heart), 'Outcome of Parkinsons': str(result_parkinson)})
+    return jsonify({'Outcome of Parkinsons': str(result_parkinson)})
 
 
 if __name__ == '__main__':
